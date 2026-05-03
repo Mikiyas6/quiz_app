@@ -11,31 +11,31 @@ class QuestionsScreen extends StatefulWidget {
 }
 
 class _QuestionsScreenState extends State<QuestionsScreen> {
-  var current;
+  var currentQuestionIndex;
   var totalPageNumber;
 
   @override
   void initState() {
-    current = 0;
+    currentQuestionIndex = 0;
     totalPageNumber = questions.length;
     super.initState();
   }
 
   void toNextQuestion() {
     setState(() {
-      current += 1;
+      currentQuestionIndex += 1;
     });
   }
 
   void toPreviousQuestion() {
     setState(() {
-      current -= 1;
+      currentQuestionIndex -= 1;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (current == totalPageNumber) {
+    if (currentQuestionIndex == totalPageNumber) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -57,8 +57,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         ],
       );
     }
-    final question = questions[current];
-    final currentPageNumber = current + 1;
+    final question = questions[currentQuestionIndex];
+    final currentPageNumber = currentQuestionIndex + 1;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,13 +87,16 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           ],
         ),
 
-        SizedBox(height: 20),
-        ...question.answers.map((answer) {
-          return Column(
-            children: [
-              AnswerButton(answerText: answer, onTap: toNextQuestion),
-              SizedBox(height: 10),
-            ],
+        SizedBox(height: 15),
+        ...question.getShuffledAnswers().map((answer) {
+          return Container(
+            margin: EdgeInsets.all(7),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AnswerButton(answerText: answer, onTap: toNextQuestion),
+              ],
+            ),
           );
         }),
         SizedBox(height: 100),

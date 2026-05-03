@@ -16,12 +16,11 @@ class AnswerButton extends StatelessWidget {
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-        fixedSize: Size(300, 10),
       ),
       onPressed: () {
         onTap();
       },
-      child: Text(answerText),
+      child: Text(answerText, textAlign: TextAlign.center),
     );
   }
 }
