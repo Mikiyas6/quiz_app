@@ -1,11 +1,28 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:quiz_app/answer_button.dart';
 import 'package:quiz_app/data/questions.dart';
 import 'package:quiz_app/footer.dart';
 import 'package:quiz_app/models/quiz_question.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:quiz_app/result_screen.dart';
 
 class QuestionsScreen extends StatefulWidget {
-  const QuestionsScreen({super.key});
+  const QuestionsScreen(
+    this.updateHashmap,
+    this.getHashmap,
+    this.setAnsweredQuestions,
+    this.getAnsweredQuestions,
+    this.getYetToBeAnswered,
+    this.removeFromYetToBeAnswered, {
+    super.key,
+  });
+  final Function updateHashmap;
+  final Function getHashmap;
+  final Function setAnsweredQuestions;
+  final Function getAnsweredQuestions;
+  final Function getYetToBeAnswered;
+  final Function removeFromYetToBeAnswered;
   @override
   State<QuestionsScreen> createState() => _QuestionsScreenState();
 }
@@ -13,16 +30,27 @@ class QuestionsScreen extends StatefulWidget {
 class _QuestionsScreenState extends State<QuestionsScreen> {
   var currentQuestionIndex;
   var totalPageNumber;
+  var isResultButtonClicked;
 
   @override
   void initState() {
     currentQuestionIndex = 0;
     totalPageNumber = questions.length;
+    isResultButtonClicked = false;
     super.initState();
   }
 
   void toNextQuestion() {
     setState(() {
+      currentQuestionIndex += 1;
+    });
+  }
+
+  void chooseAnswer(answer) {
+    setState(() {
+      widget.updateHashmap(currentQuestionIndex);
+      widget.setAnsweredQuestions(currentQuestionIndex, answer);
+      widget.removeFromYetToBeAnswered(currentQuestionIndex);
       currentQuestionIndex += 1;
     });
   }
@@ -33,29 +61,26 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     });
   }
 
+  void resultButtonClicked() {
+    setState(() {
+      isResultButtonClicked = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (currentQuestionIndex == totalPageNumber) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "You hit the end. Go back if you want",
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-          SizedBox(height: 10),
-          OutlinedButton.icon(
-            label: Text("Go Back", style: TextStyle(color: Colors.white)),
-            icon: Icon(Icons.arrow_left, color: Colors.white),
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
-              ),
-            ),
-            onPressed: toPreviousQuestion,
-          ),
-        ],
-      );
+      // final hashmap = widget.getHashmap();
+      final answeredQuestions = widget.getAnsweredQuestions();
+      if (answeredQuestions.length == totalPageNumber) {
+        return ResultScreen();
+      } else if (answeredQuestions.length != totalPageNumber &&
+              isResultButtonClicked ||
+          currentQuestionIndex == totalPageNumber) {
+        setState(() {
+          currentQuestionIndex = widget.getYetToBeAnswered()[0];
+        });
+      }
     }
     final question = questions[currentQuestionIndex];
     final currentPageNumber = currentQuestionIndex + 1;
@@ -81,7 +106,11 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             SizedBox(width: 10),
             Text(
               question.text,
-              style: TextStyle(color: Colors.white),
+              style: GoogleFonts.lato(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -94,12 +123,34 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AnswerButton(answerText: answer, onTap: toNextQuestion),
+                AnswerButton(
+                  answerText: answer,
+                  onTap: () => chooseAnswer(answer),
+                ),
               ],
             ),
           );
         }),
-        SizedBox(height: 100),
+        SizedBox(height: 20),
+        if (isResultButtonClicked &&
+            widget.getYetToBeAnswered().contains(currentQuestionIndex))
+          Text(
+            "You didn't answer this question",
+            style: TextStyle(color: Colors.red),
+          ),
+        SizedBox(height: 20),
+        if (currentPageNumber == totalPageNumber)
+          OutlinedButton.icon(
+            label: Text("See Result", style: TextStyle(color: Colors.white)),
+            icon: Icon(Icons.arrow_right, color: Colors.white),
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadiusGeometry.all(Radius.circular(10)),
+              ),
+            ),
+            onPressed: resultButtonClicked,
+          ),
+        SizedBox(height: 20),
         Footer(
           currentPageNumber,
           totalPageNumber,
