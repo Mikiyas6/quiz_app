@@ -36,18 +36,19 @@ class Footer extends StatelessWidget {
           style: TextStyle(fontSize: 17, color: Colors.white),
         ),
         SizedBox(width: 15),
-        IconButton(
-          style: IconButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: const Color.fromARGB(33, 232, 231, 231),
+        if (currentPageNumber < totalPageNumber)
+          IconButton.filled(
+            style: IconButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: const Color.fromARGB(33, 232, 231, 231),
 
-            iconSize: 20,
+              iconSize: 20,
+            ),
+            onPressed: () {
+              toNextQuestion();
+            },
+            icon: Icon(Icons.arrow_forward_ios),
           ),
-          onPressed: () {
-            toNextQuestion();
-          },
-          icon: Icon(Icons.arrow_forward_ios),
-        ),
       ],
     );
   }

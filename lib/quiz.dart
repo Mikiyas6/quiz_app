@@ -15,16 +15,11 @@ class Quiz extends StatefulWidget {
 
 class _QuizState extends State<Quiz> {
   String? activeScreen;
-  HashMap<num, num> hashmap = HashMap();
   HashMap<num, String> answeredQuestions = HashMap();
-  List<num> yetToBeAnswered = [];
 
   @override
   void initState() {
     activeScreen = "start-screen";
-    for (var i = 0; i < questions.length; i++) {
-      hashmap[i] = 0;
-    }
     super.initState();
   }
 
@@ -34,35 +29,26 @@ class _QuizState extends State<Quiz> {
     });
   }
 
-  HashMap<num, num> getHashmap() {
-    return hashmap;
-  }
-
   void setAnsweredQuestions(index, selectedAnswer) {
-    answeredQuestions[index] = selectedAnswer;
+    setState(() {
+      answeredQuestions[index] = selectedAnswer;
+    });
   }
 
   HashMap<num, String> getAnsweredQuestions() {
     return answeredQuestions;
   }
 
-  void updateHashmap(index) {
-    hashmap[index] = (hashmap[index] ?? 0) + 1;
-  }
-
   List<num> getYetToBeAnswered() {
-    hashmap.forEach((key, value) {
-      if (value == 0) {
-        yetToBeAnswered.add(key);
+    final answeredIndices = answeredQuestions.keys.toSet();
+    final List<num> result = [];
+    for (var i = 0; i < questions.length; i++) {
+      if (!answeredIndices.contains(i)) {
+        result.add(i);
       }
-    });
-    return yetToBeAnswered;
-  }
-
-  void removeFromYetToBeAnswered(index) {
-    if (yetToBeAnswered.contains(index)) {
-      yetToBeAnswered.removeWhere(index);
     }
+    result.sort();
+    return result;
   }
 
   @override
@@ -70,12 +56,9 @@ class _QuizState extends State<Quiz> {
     final screenWidget = activeScreen == "start-screen"
         ? StartScreen(switchScreen)
         : QuestionsScreen(
-            updateHashmap,
-            getHashmap,
             setAnsweredQuestions,
             getAnsweredQuestions,
             getYetToBeAnswered,
-            removeFromYetToBeAnswered,
           );
     return MaterialApp(
       useInheritedMediaQuery: true,
