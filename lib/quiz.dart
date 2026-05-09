@@ -16,11 +16,30 @@ class Quiz extends StatefulWidget {
 class _QuizState extends State<Quiz> {
   String? activeScreen;
   HashMap<num, String> answeredQuestions = HashMap();
+  var isResultButtonClicked = false;
 
   @override
   void initState() {
     activeScreen = "start-screen";
     super.initState();
+  }
+
+  void resetQuiz() {
+    setState(() {
+      answeredQuestions = HashMap();
+      activeScreen = 'start-screen';
+      isResultButtonClicked = false;
+    });
+  }
+
+  bool getResultButtonClicked() {
+    return isResultButtonClicked;
+  }
+
+  void resultButtonClicked() {
+    setState(() {
+      isResultButtonClicked = true;
+    });
   }
 
   void switchScreen() {
@@ -59,6 +78,9 @@ class _QuizState extends State<Quiz> {
             setAnsweredQuestions,
             getAnsweredQuestions,
             getYetToBeAnswered,
+            resultButtonClicked,
+            getResultButtonClicked,
+            resetQuiz,
           );
     return MaterialApp(
       useInheritedMediaQuery: true,

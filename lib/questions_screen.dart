@@ -12,12 +12,19 @@ class QuestionsScreen extends StatefulWidget {
   const QuestionsScreen(
     this.setAnsweredQuestions,
     this.getAnsweredQuestions,
-    this.getYetToBeAnswered, {
+    this.getYetToBeAnswered,
+    this.resultButtonClicked,
+    this.getResultButtonClicked,
+    this.resetQuiz, {
     super.key,
   });
   final Function setAnsweredQuestions;
   final Function getAnsweredQuestions;
   final Function getYetToBeAnswered;
+  final Function resultButtonClicked;
+  final Function getResultButtonClicked;
+  final Function resetQuiz;
+
   @override
   State<QuestionsScreen> createState() => _QuestionsScreenState();
 }
@@ -25,13 +32,11 @@ class QuestionsScreen extends StatefulWidget {
 class _QuestionsScreenState extends State<QuestionsScreen> {
   var currentQuestionIndex;
   var totalPageNumber;
-  var isResultButtonClicked;
 
   @override
   void initState() {
     currentQuestionIndex = 0;
     totalPageNumber = questions.length;
-    isResultButtonClicked = false;
     super.initState();
   }
 
@@ -54,31 +59,33 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     });
   }
 
-  void resultButtonClicked() {
-    setState(() {
-      isResultButtonClicked = true;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final answeredQuestions = widget.getAnsweredQuestions();
-    print(answeredQuestions.length);
+    final isResultButtonClicked = widget.getResultButtonClicked();
     if (currentQuestionIndex == totalPageNumber - 1 &&
         answeredQuestions.length == totalPageNumber) {
-      return ResultScreen();
+      return ResultScreen(
+        answeredQuestions,
+        totalNumberOfQuestions: totalPageNumber,
+        resetQuiz: widget.resetQuiz,
+      );
     }
     //Check if reached end of questions
     if (currentQuestionIndex == totalPageNumber) {
       // Get answered questions and check if all answered
 
       if (answeredQuestions.length == totalPageNumber) {
-        return ResultScreen(); // All answered → show results
+        return ResultScreen(
+          answeredQuestions,
+          totalNumberOfQuestions: totalPageNumber,
+          resetQuiz: widget.resetQuiz,
+        ); // All answered → show results
       }
       // If not all answered, show warning and jump to unanswered
       else {
         setState(() {
-          resultButtonClicked();
+          widget.resultButtonClicked();
           currentQuestionIndex = widget.getYetToBeAnswered()[0];
         });
       }
@@ -92,9 +99,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            QuestionNumbers(currentPageNumber),
-            SizedBox(width: 10),
-            Question(question.text),
+            Container(
+              margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
+              child: QuestionNumbers(currentPageNumber),
+            ),
+
+            Expanded(child: Question(question.text)),
           ],
         ),
 
@@ -111,7 +121,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           ),
         SizedBox(height: 20),
         if (currentPageNumber == totalPageNumber)
-          ResultButton(resultButtonClicked),
+          ResultButton(widget.resultButtonClicked),
         SizedBox(height: 20),
         Footer(
           currentPageNumber,
