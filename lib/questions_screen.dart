@@ -84,52 +84,59 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       }
       // If not all answered, show warning and jump to unanswered
       else {
-        setState(() {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           widget.resultButtonClicked();
+        });
+        setState(() {
           currentQuestionIndex = widget.getYetToBeAnswered()[0];
         });
       }
     }
     final question = questions[currentQuestionIndex];
     final currentPageNumber = currentQuestionIndex + 1;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        margin: const EdgeInsets.all(40),
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
-              child: QuestionNumbers(currentPageNumber),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                  child: QuestionNumbers(currentPageNumber),
+                ),
+
+                Expanded(child: Question(question.text)),
+              ],
             ),
 
-            Expanded(child: Question(question.text)),
+            SizedBox(height: 15),
+            ...question.getShuffledAnswers().map((answer) {
+              return Choice(answer, chooseAnswer);
+            }),
+            SizedBox(height: 20),
+            if (isResultButtonClicked &&
+                widget.getYetToBeAnswered().contains(currentQuestionIndex))
+              Text(
+                "You didn't answer this question",
+                style: TextStyle(color: Colors.red),
+              ),
+            SizedBox(height: 20),
+            if (currentPageNumber == totalPageNumber)
+              ResultButton(widget.resultButtonClicked),
+            SizedBox(height: 20),
+            Footer(
+              currentPageNumber,
+              totalPageNumber,
+              toPreviousQuestion,
+              toNextQuestion,
+            ),
           ],
         ),
-
-        SizedBox(height: 15),
-        ...question.getShuffledAnswers().map((answer) {
-          return Choice(answer, chooseAnswer);
-        }),
-        SizedBox(height: 20),
-        if (isResultButtonClicked &&
-            widget.getYetToBeAnswered().contains(currentQuestionIndex))
-          Text(
-            "You didn't answer this question",
-            style: TextStyle(color: Colors.red),
-          ),
-        SizedBox(height: 20),
-        if (currentPageNumber == totalPageNumber)
-          ResultButton(widget.resultButtonClicked),
-        SizedBox(height: 20),
-        Footer(
-          currentPageNumber,
-          totalPageNumber,
-          toPreviousQuestion,
-          toNextQuestion,
-        ),
-      ],
+      ),
     );
   }
 }

@@ -22,46 +22,72 @@ class ResultScreen extends StatelessWidget {
         numberOfCorrectAnswers += 1;
       }
     });
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          "You answered $numberOfCorrectAnswers out of $totalNumberOfQuestions correctly!",
-        ),
-        ...questions.asMap().entries.map((entry) {
-          int index = entry.key;
-          var question = entry.value;
-          return Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  QuestionNumbers(index + 1),
-                  SizedBox(width: 10),
-                  Question(question.text),
-                ],
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        margin: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "You answered $numberOfCorrectAnswers out of $totalNumberOfQuestions correctly!",
+            ),
+            SizedBox(height: 30),
+            ...questions.asMap().entries.map((entry) {
+              int index = entry.key;
+              var question = entry.value;
+              return SizedBox(
+                height: 300,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsetsDirectional.only(bottom: 10),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            QuestionNumbers(index + 1),
+                            SizedBox(width: 30),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Question(question.text),
+                                  SizedBox(height: 10),
+                                  Text(question.correctAnswer),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    answeredQuestions.values.toList()[index],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+            SizedBox(height: 30),
+            OutlinedButton.icon(
+              label: Text("Restart Quiz"),
+              style: IconButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 50),
+                shape: RoundedRectangleBorder(),
+                foregroundColor: Colors.white,
               ),
-              SizedBox(width: 10),
-              Text(question.correctAnswer),
-              SizedBox(width: 10),
-              Text(answeredQuestions.values.toList()[index]),
-            ],
-          );
-        }),
-        SizedBox(height: 30),
-        OutlinedButton.icon(
-          label: Text("Restart Quiz"),
-          style: IconButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 50),
-            shape: RoundedRectangleBorder(),
-            foregroundColor: Colors.white,
-          ),
-          onPressed: () {
-            resetQuiz();
-          },
-          icon: Icon(Icons.redo_outlined),
+              onPressed: () {
+                resetQuiz();
+              },
+              icon: Icon(Icons.redo_outlined),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
