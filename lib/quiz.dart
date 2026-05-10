@@ -88,8 +88,18 @@ class _QuizState extends State<Quiz> {
       builder: DevicePreview.appBuilder,
       home: Scaffold(
         body: Container(
-          decoration: BoxDecoration(color: Color.fromRGBO(92, 1, 158, 1)),
-          child: Center(child: screenWidget),
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 77, 13, 151),
+                Color.fromARGB(250, 107, 15, 168),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: screenWidget,
         ),
       ),
     );

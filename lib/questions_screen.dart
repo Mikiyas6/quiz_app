@@ -97,18 +97,16 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     return SizedBox(
       width: double.infinity,
       child: Container(
-        margin: const EdgeInsets.all(40),
+        margin: const EdgeInsets.all(30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                  child: QuestionNumbers(currentPageNumber),
-                ),
-
+                QuestionNumbers.normal(currentPageNumber),
+                SizedBox(width: 20),
                 Expanded(child: Question(question.text)),
               ],
             ),
