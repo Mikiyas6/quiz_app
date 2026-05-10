@@ -54,7 +54,7 @@ class ResultScreen extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            QuestionNumbers(index + 1, backgroundColor),
+                            QuestionNumbers.unique(index + 1, backgroundColor),
                             SizedBox(width: 30),
                             Expanded(
                               child: Column(

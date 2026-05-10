@@ -105,7 +105,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                QuestionNumbers.normal(currentPageNumber),
+                QuestionNumbers(currentPageNumber),
                 SizedBox(width: 20),
                 Expanded(child: Question(question.text)),
               ],

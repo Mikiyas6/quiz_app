@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class QuestionNumbers extends StatelessWidget {
-  const QuestionNumbers(
+  const QuestionNumbers(this.currentPageNumber, {super.key})
+    : this.backgroundColor = const Color.fromARGB(255, 98, 96, 96);
+  const QuestionNumbers.unique(
     this.currentPageNumber,
     this.backgroundColor, {
     super.key,
   });
-  const QuestionNumbers.normal(this.currentPageNumber, {super.key})
-    : this.backgroundColor = const Color.fromARGB(255, 98, 96, 96);
   final num currentPageNumber;
   final Color backgroundColor;
   @override
